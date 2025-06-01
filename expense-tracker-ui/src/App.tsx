@@ -1,10 +1,10 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
+import ApiTest from "./pages/ApiTest";
 import Transactions from "./pages/Transactions";
 import Accounts from "./pages/Accounts";
 import EMITracker from "./pages/EMITracker";
@@ -29,6 +29,7 @@ const App = () => (
           <Route path="/emi" element={<EMITracker />} />
           <Route path="/monthly" element={<Monthly />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/testapi" element={<ApiTest />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
