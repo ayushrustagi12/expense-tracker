@@ -5,16 +5,19 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up(): void {
+    public function up(): void
+    {
+        // Accounts
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('name');
-            $table->enum('type', ['savings', 'wallet', 'credit_card']);
+            $table->enum('type', ['bank', 'wallet', 'credit_card']);
             $table->decimal('initial_balance', 12, 2)->default(0);
             $table->timestamps();
         });
 
+        // Categories
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -23,55 +26,60 @@ return new class extends Migration {
             $table->timestamps();
         });
 
+        // Transactions
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('account_id')->constrained()->onDelete('cascade');
             $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null');
-            $table->string('description')->nullable();
             $table->decimal('amount', 12, 2);
+            $table->enum('type', ['income', 'expense']);
             $table->date('date');
-            $table->enum('type', ['income', 'expense', 'transfer']);
-            $table->foreignId('linked_transaction_id')->nullable()->constrained('transactions')->onDelete('cascade'); // for self transfers
+            $table->string('description')->nullable();
             $table->timestamps();
         });
 
-        Schema::create('emis', function (Blueprint $table) {
+        // Transfers (self-transfers between accounts)
+        Schema::create('transfers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('loan_name');
+            $table->foreignId('from_account_id')->constrained('accounts')->onDelete('cascade');
+            $table->foreignId('to_account_id')->constrained('accounts')->onDelete('cascade');
+            $table->decimal('amount', 12, 2);
+            $table->date('date');
+            $table->string('note')->nullable();
+            $table->timestamps();
+        });
+
+        // EMI Schedules
+        Schema::create('emi_schedules', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('account_id')->constrained()->onDelete('cascade');
-            $table->decimal('total_amount', 12, 2);
-            $table->integer('number_of_installments');
-            $table->decimal('interest_rate', 5, 2)->nullable(); // optional
+            $table->string('name'); // EMI for phone/laptop/etc.
+            $table->decimal('amount', 12, 2);
+            $table->integer('total_installments');
+            $table->integer('installments_paid')->default(0);
             $table->date('start_date');
             $table->timestamps();
         });
 
-        Schema::create('emi_installments', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('emi_id')->constrained()->onDelete('cascade');
-            $table->decimal('amount', 12, 2);
-            $table->date('due_date');
-            $table->boolean('is_paid')->default(false);
-            $table->timestamps();
-        });
-
+        // Budgets
         Schema::create('budgets', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
-            $table->year('year');
-            $table->unsignedTinyInteger('month');
+            $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null');
             $table->decimal('amount', 12, 2);
+            $table->string('month'); // Format: YYYY-MM
             $table->timestamps();
         });
     }
 
-    public function down(): void {
+    public function down(): void
+    {
         Schema::dropIfExists('budgets');
-        Schema::dropIfExists('emi_installments');
-        Schema::dropIfExists('emis');
+        Schema::dropIfExists('emi_schedules');
+        Schema::dropIfExists('transfers');
         Schema::dropIfExists('transactions');
         Schema::dropIfExists('categories');
         Schema::dropIfExists('accounts');

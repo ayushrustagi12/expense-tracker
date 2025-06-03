@@ -1,17 +1,16 @@
-
-import React from 'react';
-import { Layout } from '@/components/Layout';
-import { StatCard } from '@/components/Dashboard/StatCard';
-import { ExpenseChart } from '@/components/Dashboard/ExpenseChart';
-import { TrendChart } from '@/components/Dashboard/TrendChart';
-import { 
-  Wallet, 
-  CreditCard, 
-  TrendingUp, 
+import React from "react";
+import { Layout } from "@/components/Layout";
+import { StatCard } from "@/components/Dashboard/StatCard";
+import { ExpenseChart } from "@/components/Dashboard/ExpenseChart";
+import { TrendChart } from "@/components/Dashboard/TrendChart";
+import {
+  Wallet,
+  CreditCard,
+  TrendingUp,
   TrendingDown,
   Calendar,
-  AlertCircle
-} from 'lucide-react';
+  AlertCircle,
+} from "lucide-react";
 
 const Dashboard = () => {
   return (
@@ -19,7 +18,9 @@ const Dashboard = () => {
       <div className="p-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-2">Welcome back! Here's your financial overview for December 2024</p>
+          <p className="text-gray-600 mt-2">
+            Welcome back! Here's your financial overview for December 2024
+          </p>
         </div>
 
         {/* Stats Grid */}
@@ -68,7 +69,9 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Active EMIs</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Active EMIs
+              </h3>
               <Calendar className="h-5 w-5 text-gray-400" />
             </div>
             <div className="space-y-3">
@@ -91,7 +94,9 @@ const Dashboard = () => {
 
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Credit Limits</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Credit Limits
+              </h3>
               <CreditCard className="h-5 w-5 text-gray-400" />
             </div>
             <div className="space-y-3">
@@ -114,7 +119,9 @@ const Dashboard = () => {
 
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Upcoming Bills</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Upcoming Bills
+              </h3>
               <AlertCircle className="h-5 w-5 text-orange-400" />
             </div>
             <div className="space-y-3">
@@ -123,7 +130,9 @@ const Dashboard = () => {
                 <span className="font-medium text-orange-600">Due 15th</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Netflix Subscription</span>
+                <span className="text-sm text-gray-600">
+                  Netflix Subscription
+                </span>
                 <span className="font-medium text-orange-600">Due 20th</span>
               </div>
               <div className="flex justify-between items-center">
