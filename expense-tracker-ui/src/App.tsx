@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 import { fetchCurrentUser } from "./redux/authSlice";
 import AppRoutes from "./routes/AppRoutes.tsx";
+import { Toaster } from "@/components/ui/toaster";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -13,6 +14,7 @@ const App = () => {
 
   return (
     <Router>
+      <Toaster />
       <AppRoutes />
     </Router>
   );

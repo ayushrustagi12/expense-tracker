@@ -10,7 +10,7 @@ interface Props {
 
 const PrivateRoute = ({ children }: Props) => {
   const { user } = useSelector((state: RootState) => state.auth);
-  return user ? children : <Navigate to="/auth" />;
+  return user ? children : <Navigate to="/login" />;
 };
 
 export default PrivateRoute;

@@ -59,10 +59,12 @@ export const loginUser = createAsyncThunk(
       email,
       password,
       navigate,
+      remember,
     }: {
       email: string;
       password: string;
       navigate: (path: string) => void;
+      remember: boolean;
     },
     thunkAPI
   ) => {
@@ -72,7 +74,7 @@ export const loginUser = createAsyncThunk(
 
       const response = await axios.post(
         `${API_URL}/login`,
-        { email, password },
+        { email, password, remember },
         {
           withCredentials: true,
           headers: {
