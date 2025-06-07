@@ -96,8 +96,19 @@ export const loginUser = createAsyncThunk(
 export const logoutUser = createAsyncThunk(
   "auth/logout",
   async (_, thunkAPI) => {
+    await getCSRF();
+    const token = decodeURIComponent(Cookies.get("XSRF-TOKEN"));
     try {
-      await axios.post(`${API_URL}/logout`, {}, { withCredentials: true });
+      await axios.post(
+        `${API_URL}/logout`,
+        {},
+        {
+          withCredentials: true,
+          headers: {
+            "X-XSRF-TOKEN": token || "",
+          },
+        }
+      );
       return null;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
