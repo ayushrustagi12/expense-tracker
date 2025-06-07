@@ -1,9 +1,24 @@
+import React from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../../redux/authSlice";
 import { AppDispatch, RootState } from "../../redux/store";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { AuthMode } from "@/types/auth";
 
-const RegisterForm = ({ onFlip }: { onFlip: (to: "login") => void }) => {
+interface RegisterFormProps {
+  onSwitchMode: (mode: AuthMode) => void;
+}
+
+const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchMode }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { isLoading, error } = useSelector((state: RootState) => state.auth);
 
@@ -20,53 +35,79 @@ const RegisterForm = ({ onFlip }: { onFlip: (to: "login") => void }) => {
   };
 
   return (
-    <form onSubmit={handleRegister} className="space-y-4">
-      <h2 className="text-xl font-bold">Register</h2>
-      {error && <div className="text-red-500">{error}</div>}
-      <input
-        type="text"
-        placeholder="Name"
-        className="w-full p-2 border rounded"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
-      />
-      <input
-        type="email"
-        placeholder="Email"
-        className="w-full p-2 border rounded"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <input
-        type="password"
-        placeholder="Password (min 8 chars)"
-        className="w-full p-2 border rounded"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
-      {!isStrongPassword && (
-        <p className="text-sm text-red-500">Password too weak.</p>
-      )}
-      <button
-        type="submit"
-        className="w-full bg-green-600 text-white py-2 rounded disabled:opacity-50"
-        disabled={isLoading || !isStrongPassword}
-      >
-        {isLoading ? "Creating Account..." : "Register"}
-      </button>
-      <div className="text-sm mt-2">
-        <button
-          type="button"
-          onClick={() => onFlip("login")}
-          className="text-blue-500"
-        >
-          Back to Login
-        </button>
-      </div>
-    </form>
+    <>
+      <CardHeader>
+        <CardTitle className="text-2xl font-semibold text-center">
+          Create Account
+        </CardTitle>
+        <CardDescription className="text-center">
+          Sign up to start managing your finances
+          {error && <div className="text-red-500">{error}</div>}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleRegister} className="space-y-6">
+          <div>
+            <Label htmlFor="fullName">Full Name</Label>
+            <Input
+              id="fullName"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your full name"
+              required
+              className="mt-1"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="email">Email address</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              required
+              className="mt-1"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Create a password"
+              required
+              className="mt-1"
+            />
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading || !isStrongPassword}
+          >
+            {isLoading ? "Creating Account..." : "Register"}
+          </Button>
+        </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            Already have an account?{" "}
+            <button
+              onClick={() => onSwitchMode("login")}
+              className="font-medium text-blue-600 hover:text-blue-500"
+            >
+              Sign in here
+            </button>
+          </p>
+        </div>
+      </CardContent>
+    </>
   );
 };
 

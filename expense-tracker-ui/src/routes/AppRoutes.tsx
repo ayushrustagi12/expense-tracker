@@ -3,7 +3,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import PrivateRoute from "./PrivateRoute";
-import AuthPage from "../pages/AuthPage";
 import Dashboard from "../pages/Dashboard";
 import Transactions from "../pages/Transactions";
 import Accounts from "../pages/Accounts";
@@ -11,6 +10,7 @@ import EMITracker from "../pages/EMITracker";
 import Monthly from "../pages/Monthly";
 import Settings from "../pages/Settings";
 import Profile from "../pages/Profile";
+import Login from "../pages/Login";
 
 const AppRoutes = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -19,11 +19,11 @@ const AppRoutes = () => {
     <Routes>
       <Route
         path="/"
-        element={user ? <Navigate to="/dashboard" /> : <Navigate to="/auth" />}
+        element={user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />}
       />
       <Route
-        path="/auth"
-        element={!user ? <AuthPage /> : <Navigate to="/dashboard" />}
+        path="/login"
+        element={!user ? <Login /> : <Navigate to="/dashboard" />}
       />
 
       <Route

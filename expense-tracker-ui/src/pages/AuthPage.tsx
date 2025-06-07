@@ -1,15 +1,50 @@
-import { useState } from "react";
-import AuthCard from "../components/auth/AuthCard";
+import React, { useState } from "react";
+import AuthCard from "@/components/auth/AuthCard"; // adjust path
+import { AuthMode } from "@/types/auth";
 
-const AuthPage = () => {
-  const [flipTo, setFlipTo] = useState<"login" | "register" | "forgot">(
-    "login"
-  );
+const AuthPage: React.FC = () => {
+  const [authMode, setAuthMode] = useState<AuthMode>("login");
+  const [isFlipping, setIsFlipping] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+    fullName: "",
+    emailSent: false,
+  });
+
+  const onFormDataChange = {
+    setEmail: (email: string) => setFormData((prev) => ({ ...prev, email })),
+    setPassword: (password: string) =>
+      setFormData((prev) => ({ ...prev, password })),
+    setConfirmPassword: (confirmPassword: string) =>
+      setFormData((prev) => ({ ...prev, confirmPassword })),
+    setFullName: (fullName: string) =>
+      setFormData((prev) => ({ ...prev, fullName })),
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // handle login/register/forgot here based on `authMode`
+  };
+
+  const handleSwitchMode = (mode: AuthMode) => {
+    setIsFlipping(true);
+    setTimeout(() => {
+      setAuthMode(mode);
+      setIsFlipping(false);
+    }, 300); // sync with CSS animation
+  };
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-gray-100">
-      <AuthCard flipTo={flipTo} setFlipTo={setFlipTo} />
-    </div>
+    <AuthCard
+      authMode={authMode}
+      isFlipping={isFlipping}
+      formData={formData}
+      onFormDataChange={onFormDataChange}
+      onSubmit={handleSubmit}
+      onSwitchMode={handleSwitchMode}
+    />
   );
 };
 

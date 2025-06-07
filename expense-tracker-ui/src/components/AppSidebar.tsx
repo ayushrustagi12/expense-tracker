@@ -58,7 +58,7 @@ export function AppSidebar() {
   const handleLogout = async () => {
     try {
       await dispatch(logoutUser()).unwrap();
-      navigate("/auth");
+      navigate("/");
     } catch (error) {
       console.error("Logout failed:", error);
     }
