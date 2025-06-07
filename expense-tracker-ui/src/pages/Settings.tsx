@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Bell,
   CreditCard,
@@ -25,8 +26,13 @@ import {
 const Settings = () => {
   return (
     <Layout>
-      <div className="p-8 max-w-4xl">
-        <div className="mb-8">
+      <div className="flex items-center gap-4 p-4 border-b border-gray-200 md:hidden">
+        <SidebarTrigger />
+        <h1 className="text-lg font-semibold">Preferences</h1>
+      </div>
+
+      <div className="p-4 md:p-8 max-w-4xl">
+        <div className="mb-8 hidden md:block">
           <h1 className="text-3xl font-bold text-gray-900">Preferences</h1>
           <p className="text-gray-600 mt-2">
             Customize your app experience and preferences

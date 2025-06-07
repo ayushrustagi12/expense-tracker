@@ -3,6 +3,7 @@ import { Layout } from "@/components/Layout";
 import { StatCard } from "@/components/Dashboard/StatCard";
 import { ExpenseChart } from "@/components/Dashboard/ExpenseChart";
 import { TrendChart } from "@/components/Dashboard/TrendChart";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Wallet,
   CreditCard,
@@ -15,16 +16,27 @@ import {
 const Dashboard = () => {
   return (
     <Layout>
-      <div className="p-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+      <div className="p-4 md:p-6 lg:p-8">
+        {/* Mobile header with trigger */}
+        <div className="flex items-center gap-4 mb-6 md:hidden">
+          <SidebarTrigger />
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          </div>
+        </div>
+
+        {/* Desktop header */}
+        <div className="hidden md:block mb-8">
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">
+            Dashboard
+          </h1>
           <p className="text-gray-600 mt-2">
             Welcome back! Here's your financial overview for December 2024
           </p>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* Stats Grid - Responsive */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
           <StatCard
             title="Total Expenses"
             value="₹48,000"
@@ -59,85 +71,101 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Charts Row - Responsive */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
           <ExpenseChart />
           <TrendChart />
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        {/* Quick Stats - Responsive */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+          <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-base md:text-lg font-semibold text-gray-900">
                 Active EMIs
               </h3>
-              <Calendar className="h-5 w-5 text-gray-400" />
+              <Calendar className="h-4 w-4 md:h-5 md:w-5 text-gray-400" />
             </div>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Home Loan</span>
-                <span className="font-medium">₹25,000</span>
+                <span className="font-medium text-sm md:text-base">
+                  ₹25,000
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Car Loan</span>
-                <span className="font-medium">₹18,000</span>
+                <span className="font-medium text-sm md:text-base">
+                  ₹18,000
+                </span>
               </div>
               <div className="pt-2 border-t">
                 <div className="flex justify-between items-center font-semibold">
-                  <span>Total Monthly EMI</span>
-                  <span>₹43,000</span>
+                  <span className="text-sm md:text-base">
+                    Total Monthly EMI
+                  </span>
+                  <span className="text-sm md:text-base">₹43,000</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-base md:text-lg font-semibold text-gray-900">
                 Credit Limits
               </h3>
-              <CreditCard className="h-5 w-5 text-gray-400" />
+              <CreditCard className="h-4 w-4 md:h-5 md:w-5 text-gray-400" />
             </div>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">HDFC Credit Card</span>
-                <span className="font-medium">₹35,000 left</span>
+                <span className="font-medium text-sm md:text-base">
+                  ₹35,000 left
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">SBI Credit Card</span>
-                <span className="font-medium">₹15,000 left</span>
+                <span className="font-medium text-sm md:text-base">
+                  ₹15,000 left
+                </span>
               </div>
               <div className="pt-2 border-t">
                 <div className="flex justify-between items-center font-semibold">
-                  <span>Total Available</span>
-                  <span className="text-green-600">₹50,000</span>
+                  <span className="text-sm md:text-base">Total Available</span>
+                  <span className="text-green-600 text-sm md:text-base">
+                    ₹50,000
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-base md:text-lg font-semibold text-gray-900">
                 Upcoming Bills
               </h3>
-              <AlertCircle className="h-5 w-5 text-orange-400" />
+              <AlertCircle className="h-4 w-4 md:h-5 md:w-5 text-orange-400" />
             </div>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Electricity Bill</span>
-                <span className="font-medium text-orange-600">Due 15th</span>
+                <span className="font-medium text-orange-600 text-sm">
+                  Due 15th
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">
                   Netflix Subscription
                 </span>
-                <span className="font-medium text-orange-600">Due 20th</span>
+                <span className="font-medium text-orange-600 text-sm">
+                  Due 20th
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Internet Bill</span>
-                <span className="font-medium text-green-600">Paid</span>
+                <span className="font-medium text-green-600 text-sm">Paid</span>
               </div>
             </div>
           </div>
