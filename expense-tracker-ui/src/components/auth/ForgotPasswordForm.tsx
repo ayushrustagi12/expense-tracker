@@ -1,5 +1,3 @@
-// expense-tracker-ui/src/components/ForgotPasswordForm.tsx
-
 import { useState } from "react";
 
 const ForgotPasswordForm = ({ onFlip }: { onFlip: (to: "login") => void }) => {

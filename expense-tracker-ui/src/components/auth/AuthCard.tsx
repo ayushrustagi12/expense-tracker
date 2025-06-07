@@ -1,5 +1,3 @@
-// expense-tracker-ui/src/components/AuthCard.tsx
-
 import { useState } from "react";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";

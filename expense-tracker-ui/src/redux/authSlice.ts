@@ -35,9 +35,7 @@ export const registerUser = createAsyncThunk(
   ) => {
     try {
       await getCSRF();
-
       const token = decodeURIComponent(Cookies.get("XSRF-TOKEN"));
-
       const response = await axios.post(`${API_URL}/register`, formData, {
         withCredentials: true,
         headers: {
@@ -56,12 +54,36 @@ export const registerUser = createAsyncThunk(
 
 export const loginUser = createAsyncThunk(
   "auth/login",
-  async (formData: { email: string; password: string }, thunkAPI) => {
+  async (
+    {
+      email,
+      password,
+      navigate,
+    }: {
+      email: string;
+      password: string;
+      navigate: (path: string) => void;
+    },
+    thunkAPI
+  ) => {
     try {
       await getCSRF();
-      const response = await axios.post(`${API_URL}/login`, formData, {
-        withCredentials: true,
-      });
+      const token = decodeURIComponent(Cookies.get("XSRF-TOKEN"));
+
+      const response = await axios.post(
+        `${API_URL}/login`,
+        { email, password },
+        {
+          withCredentials: true,
+          headers: {
+            "X-XSRF-TOKEN": token || "",
+          },
+        }
+      );
+
+      await thunkAPI.dispatch(fetchCurrentUser() as any);
+      navigate("/dashboard");
+
       return response.data.user;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
@@ -86,7 +108,7 @@ export const logoutUser = createAsyncThunk(
 );
 
 export const fetchCurrentUser = createAsyncThunk(
-  "auth/me",
+  "auth/fetchCurrentUser",
   async (_, thunkAPI) => {
     try {
       const response = await axios.get(`${API_URL}/user`, {
@@ -94,7 +116,10 @@ export const fetchCurrentUser = createAsyncThunk(
       });
       return response.data;
     } catch (error: any) {
-      return thunkAPI.rejectWithValue("Not authenticated");
+      if (error.response?.status === 401) {
+        return thunkAPI.rejectWithValue(null);
+      }
+      return thunkAPI.rejectWithValue("Failed to fetch user");
     }
   }
 );

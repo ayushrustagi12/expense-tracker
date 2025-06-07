@@ -1,5 +1,3 @@
-// expense-tracker-ui/src/pages/AuthPage.tsx
-
 import { useState } from "react";
 import AuthCard from "../components/auth/AuthCard";
 

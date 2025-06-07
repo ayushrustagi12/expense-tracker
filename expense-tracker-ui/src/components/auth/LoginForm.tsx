@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../redux/authSlice";
 import { AppDispatch, RootState } from "../../redux/store";
 
@@ -9,6 +10,7 @@ const LoginForm = ({
   onFlip: (to: "register" | "forgot") => void;
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const { isLoading, error } = useSelector((state: RootState) => state.auth);
 
   const [email, setEmail] = useState("");
@@ -16,7 +18,7 @@ const LoginForm = ({
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(loginUser({ email, password }));
+    dispatch(loginUser({ email, password, navigate }) as any);
   };
 
   return (
