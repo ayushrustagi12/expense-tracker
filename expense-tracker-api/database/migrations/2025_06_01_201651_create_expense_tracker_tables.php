@@ -17,12 +17,27 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        // Categories
+        // Categories (static, not user-specific now)
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->enum('type', ['income', 'expense']);
+            $table->timestamps();
+        });
+
+        // Frequencies
+        Schema::create('frequencies', function (Blueprint $table) {
+            $table->id();
+            $table->string('label');
+            $table->timestamps();
+        });
+
+        // Currencies
+        Schema::create('currencies', function (Blueprint $table) {
+            $table->id();
+            $table->string('code', 3)->unique();
+            $table->string('name');
+            $table->string('symbol')->nullable();
             $table->timestamps();
         });
 
@@ -39,7 +54,7 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        // Transfers (self-transfers between accounts)
+        // Transfers
         Schema::create('transfers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -56,7 +71,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('account_id')->constrained()->onDelete('cascade');
-            $table->string('name'); // EMI for phone/laptop/etc.
+            $table->string('name');
             $table->decimal('amount', 12, 2);
             $table->integer('total_installments');
             $table->integer('installments_paid')->default(0);
@@ -81,6 +96,8 @@ return new class extends Migration {
         Schema::dropIfExists('emi_schedules');
         Schema::dropIfExists('transfers');
         Schema::dropIfExists('transactions');
+        Schema::dropIfExists('currencies');
+        Schema::dropIfExists('frequencies');
         Schema::dropIfExists('categories');
         Schema::dropIfExists('accounts');
     }

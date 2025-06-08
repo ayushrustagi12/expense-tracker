@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
+import staticDataReducer from "./staticDataSlice";
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
+    staticData: staticDataReducer,
   },
 });
 

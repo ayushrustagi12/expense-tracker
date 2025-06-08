@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import {
   Dialog,
   DialogContent,
@@ -30,6 +31,12 @@ import { z } from "zod";
 import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
+import {
+  fetchStaticData,
+  selectFetchStaticData,
+} from "@/redux/staticDataSlice";
+
 const transactionSchema = z.object({
   description: z.string().min(1, "Description is required"),
   amount: z.string().min(1, "Amount is required"),
@@ -54,6 +61,17 @@ export const AddTransactionDialog = ({
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
 
+  const dispatch = useAppDispatch();
+
+  // Fetch categories from API on mount
+  useEffect(() => {
+    dispatch(fetchStaticData());
+  }, [dispatch]);
+
+  // Select categories from redux state
+  const { categories } = useSelector(selectFetchStaticData);
+  console.log("categories", categories);
+
   const form = useForm<TransactionFormData>({
     resolver: zodResolver(transactionSchema),
     defaultValues: {
@@ -67,35 +85,14 @@ export const AddTransactionDialog = ({
     },
   });
 
-  const onSubmit = (data: TransactionFormData) => {
-    console.log("Transaction data:", data);
-    toast({
-      title: "Transaction Added",
-      description: `${data.type === "income" ? "Income" : "Expense"} of ₹${
-        data.amount
-      } has been added successfully.`,
-    });
-    form.reset();
-    setOpen(false);
-  };
+  const selectedType = form.watch("type");
+  console.log("selectedType", selectedType);
+  const filteredCategories = categories.filter(
+    (cat) => cat.type.toLowerCase() === selectedType.toLowerCase()
+  );
+  console.log("filteredCategories", filteredCategories);
 
-  const incomeCategories = [
-    "Salary",
-    "Freelance",
-    "Investment",
-    "Business",
-    "Other Income",
-  ];
-  const expenseCategories = [
-    "Food & Dining",
-    "Transport",
-    "Shopping",
-    "Subscriptions",
-    "Bills",
-    "Healthcare",
-    "Entertainment",
-    "Other",
-  ];
+  // Hardcoded payment modes (not from API)
   const paymentModes = [
     "UPI",
     "Credit Card",
@@ -104,6 +101,8 @@ export const AddTransactionDialog = ({
     "Cash",
     "Net Banking",
   ];
+
+  // Hardcoded sources (same as before)
   const sources = [
     "HDFC Bank",
     "SBI Bank",
@@ -115,9 +114,17 @@ export const AddTransactionDialog = ({
     "Other",
   ];
 
-  const selectedType = form.watch("type");
-  const categories =
-    selectedType === "income" ? incomeCategories : expenseCategories;
+  const onSubmit = (data: TransactionFormData) => {
+    console.log("Transaction data:", data);
+    toast({
+      title: "Transaction Added",
+      description: `${data.type === "income" ? "Income" : "Expense"} of ₹${
+        data.amount
+      } has been added successfully.`,
+    });
+    form.reset();
+    setOpen(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -161,7 +168,13 @@ export const AddTransactionDialog = ({
                   <FormItem>
                     <FormLabel>Amount</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="0.00" {...field} />
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="0.00"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -175,8 +188,12 @@ export const AddTransactionDialog = ({
                   <FormItem>
                     <FormLabel>Type</FormLabel>
                     <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        // Reset category when type changes to avoid stale category
+                        form.setValue("category", "");
+                      }}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -207,11 +224,15 @@ export const AddTransactionDialog = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
+                      {filteredCategories.length > 0 ? (
+                        filteredCategories.map((category) => (
+                          <SelectItem key={category.id} value={category.name}>
+                            {category.name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="Other">Other</SelectItem>
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
