@@ -59,8 +59,6 @@ export function AddEMIDialog() {
   });
 
   const onSubmit = (data: EMIFormValues) => {
-    console.log("New EMI data:", data);
-    // Here you would typically save the EMI data
     setOpen(false);
     form.reset();
   };

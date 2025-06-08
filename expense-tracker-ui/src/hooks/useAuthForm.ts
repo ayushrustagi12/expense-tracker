@@ -12,20 +12,6 @@ export const useAuthForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (authMode === "login") {
-      console.log("Login attempt:", { email, password });
-    } else if (authMode === "register") {
-      console.log("Register attempt:", {
-        fullName,
-        email,
-        password,
-        confirmPassword,
-      });
-    } else if (authMode === "forgot-password") {
-      console.log("Forgot password for:", email);
-      setEmailSent(true);
-    }
   };
 
   const resetForm = () => {

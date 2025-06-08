@@ -70,7 +70,6 @@ export const AddTransactionDialog = ({
 
   // Select categories from redux state
   const { categories } = useSelector(selectFetchStaticData);
-  console.log("categories", categories);
 
   const form = useForm<TransactionFormData>({
     resolver: zodResolver(transactionSchema),
@@ -86,11 +85,9 @@ export const AddTransactionDialog = ({
   });
 
   const selectedType = form.watch("type");
-  console.log("selectedType", selectedType);
   const filteredCategories = categories.filter(
     (cat) => cat.type.toLowerCase() === selectedType.toLowerCase()
   );
-  console.log("filteredCategories", filteredCategories);
 
   // Hardcoded payment modes (not from API)
   const paymentModes = [
@@ -115,7 +112,6 @@ export const AddTransactionDialog = ({
   ];
 
   const onSubmit = (data: TransactionFormData) => {
-    console.log("Transaction data:", data);
     toast({
       title: "Transaction Added",
       description: `${data.type === "income" ? "Income" : "Expense"} of ₹${

@@ -49,8 +49,6 @@ export function AddCreditCardDialog() {
   });
 
   const onSubmit = (data: CardFormValues) => {
-    console.log("New card data:", data);
-    // Here you would typically save the card data
     setOpen(false);
     form.reset();
   };

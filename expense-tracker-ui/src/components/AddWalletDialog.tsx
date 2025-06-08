@@ -45,8 +45,6 @@ export function AddWalletDialog() {
   });
 
   const onSubmit = (data: WalletFormValues) => {
-    console.log("New wallet data:", data);
-    // Here you would typically save the wallet data
     setOpen(false);
     form.reset();
   };

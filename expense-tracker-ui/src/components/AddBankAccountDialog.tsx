@@ -47,8 +47,6 @@ export function AddBankAccountDialog() {
   });
 
   const onSubmit = (data: AccountFormValues) => {
-    console.log("New account data:", data);
-    // Here you would typically save the account data
     setOpen(false);
     form.reset();
   };
