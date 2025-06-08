@@ -1,8 +1,10 @@
 import React from "react";
 import { Layout } from "@/components/Layout";
-import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Plus, CreditCard, Wallet, MoreVertical } from "lucide-react";
+import { CreditCard, Wallet, MoreVertical } from "lucide-react";
+import { AddCreditCardDialog } from "@/components/AddCreditCardDialog";
+import { AddBankAccountDialog } from "@/components/AddBankAccountDialog";
+import { AddWalletDialog } from "@/components/AddWalletDialog";
 
 const accounts = [
   {
@@ -59,6 +61,35 @@ const cards = [
   },
 ];
 
+const wallets = [
+  {
+    id: 1,
+    name: "Paytm Wallet",
+    type: "Digital Wallet",
+    provider: "Paytm",
+    balance: 2500,
+    icon: Wallet,
+    color: "bg-indigo-500",
+  },
+  {
+    id: 2,
+    name: "PhonePe Wallet",
+    type: "Digital Wallet",
+    provider: "PhonePe",
+    balance: 1200,
+    icon: Wallet,
+    color: "bg-violet-500",
+  },
+  {
+    id: 3,
+    name: "Cash Wallet",
+    type: "Physical Wallet",
+    balance: 3000,
+    icon: Wallet,
+    color: "bg-emerald-500",
+  },
+];
+
 const Accounts = () => {
   return (
     <Layout>
@@ -73,9 +104,9 @@ const Accounts = () => {
               </h1>
             </div>
           </div>
-          <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="h-4 w-4" />
-          </Button>
+          <div className="flex gap-2">
+            <AddBankAccountDialog />
+          </div>
         </div>
 
         {/* Desktop header */}
@@ -85,20 +116,26 @@ const Accounts = () => {
               Accounts & Cards
             </h1>
             <p className="text-gray-600 mt-2">
-              Manage your bank accounts and payment cards
+              Manage your bank accounts, payment cards, and wallets
             </p>
           </div>
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Account/Card
-          </Button>
+          <div className="flex gap-3">
+            <AddBankAccountDialog />
+            <AddCreditCardDialog />
+            <AddWalletDialog />
+          </div>
         </div>
 
         {/* Bank Accounts */}
         <div className="mb-6 md:mb-8">
-          <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-4">
-            Bank Accounts
-          </h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-900">
+              Bank Accounts
+            </h2>
+            <div className="md:hidden">
+              <AddBankAccountDialog />
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
             {accounts.map((account) => (
               <div
@@ -138,10 +175,15 @@ const Accounts = () => {
         </div>
 
         {/* Cards */}
-        <div>
-          <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-4">
-            Payment Cards
-          </h2>
+        <div className="mb-6 md:mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-900">
+              Payment Cards
+            </h2>
+            <div className="md:hidden">
+              <AddCreditCardDialog />
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
             {cards.map((card) => (
               <div
@@ -238,6 +280,63 @@ const Accounts = () => {
                     </div>
                   </div>
                 )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Wallets */}
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-900">
+              Wallets
+            </h2>
+            <div className="md:hidden">
+              <AddWalletDialog />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+            {wallets.map((wallet) => (
+              <div
+                key={wallet.id}
+                className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div
+                    className={`p-2 md:p-3 rounded-lg ${wallet.color} bg-opacity-10`}
+                  >
+                    <wallet.icon
+                      className={`h-5 w-5 md:h-6 md:w-6 ${wallet.color.replace(
+                        "bg-",
+                        "text-"
+                      )}`}
+                    />
+                  </div>
+                  <button className="text-gray-400 hover:text-gray-600 p-1">
+                    <MoreVertical className="h-4 w-4 md:h-5 md:w-5" />
+                  </button>
+                </div>
+
+                <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-1 truncate">
+                  {wallet.name}
+                </h3>
+                <p className="text-sm text-gray-500 mb-4">{wallet.type}</p>
+
+                {wallet.provider && (
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-sm text-gray-600">Provider</span>
+                    <span className="text-sm font-medium">
+                      {wallet.provider}
+                    </span>
+                  </div>
+                )}
+
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Balance</span>
+                  <span className="text-base md:text-lg font-bold text-gray-900">
+                    ₹{wallet.balance.toLocaleString()}
+                  </span>
+                </div>
               </div>
             ))}
           </div>

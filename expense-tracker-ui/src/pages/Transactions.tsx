@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Filter, Search, ArrowUpDown } from "lucide-react";
+import { AddTransactionDialog } from "@/components/AddTransactionDialog";
 
 const Transactions = () => {
   // Sample transaction data
@@ -82,10 +83,7 @@ const Transactions = () => {
               <Search className="h-4 w-4 mr-2" />
               Search
             </Button>
-            <Button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Transaction
-            </Button>
+            <AddTransactionDialog />
           </div>
         </div>
 

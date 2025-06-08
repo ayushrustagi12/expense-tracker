@@ -1,8 +1,8 @@
 import React from "react";
 import { Layout } from "@/components/Layout";
-import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Plus, Calendar, CreditCard } from "lucide-react";
+import { Calendar, CreditCard } from "lucide-react";
+import { AddEMIDialog } from "@/components/AddEMIDialog";
 
 const emis = [
   {
@@ -67,9 +67,7 @@ const EMITracker = () => {
               <h1 className="text-xl font-bold text-gray-900">EMI Tracker</h1>
             </div>
           </div>
-          <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="h-4 w-4" />
-          </Button>
+          <AddEMIDialog />
         </div>
 
         {/* Desktop header */}
@@ -82,10 +80,7 @@ const EMITracker = () => {
               Monitor and manage all your loan EMIs
             </p>
           </div>
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Add EMI
-          </Button>
+          <AddEMIDialog />
         </div>
 
         {/* Summary Cards - Responsive */}
