@@ -31,7 +31,7 @@ import { z } from "zod";
 import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-import { useAppDispatch, useAppSelector } from "@/redux/hook";
+import { useAppDispatch } from "@/redux/hook";
 import {
   fetchStaticData,
   selectFetchStaticData,

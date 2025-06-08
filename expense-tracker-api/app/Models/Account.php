@@ -1,16 +1,22 @@
 <?php
 
+// app/Models/Account.php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Account extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'user_id', 'name', 'type', 'initial_balance'
+        'user_id',
+        'account_name',
+        'account_category',
+        'balance',
+        'currency',
+        'status',
+        'notes',
     ];
 
     public function user()
@@ -18,23 +24,23 @@ class Account extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function transactions()
+    public function savingsDetails(): HasOne
     {
-        return $this->hasMany(Transaction::class);
+        return $this->hasOne(AccountDetailBankAccount::class);
     }
 
-    public function emiSchedules()
+    public function creditCardDetails(): HasOne
     {
-        return $this->hasMany(EmiSchedule::class);
+        return $this->hasOne(AccountDetailCreditCard::class);
     }
 
-    public function outgoingTransfers()
+    public function debitCardDetails(): HasOne
     {
-        return $this->hasMany(Transfer::class, 'from_account_id');
+        return $this->hasOne(AccountDetailDebitCard::class);
     }
 
-    public function incomingTransfers()
+    public function walletDetails(): HasOne
     {
-        return $this->hasMany(Transfer::class, 'to_account_id');
+        return $this->hasOne(AccountDetailWallet::class);
     }
 }

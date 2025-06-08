@@ -21,19 +21,30 @@ import { Wallet, Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useToast } from "@/components/ui/use-toast";
+import { useAppDispatch } from "@/redux/hook";
+import { addAccount } from "@/redux/accountSlice";
 
 const accountFormSchema = z.object({
   accountName: z.string().min(1, "Account name is required"),
-  accountNumber: z.string().min(4, "Account number is required"),
+  accountNumber: z
+    .string()
+    .min(4, "Account number is required")
+    .regex(/^[0-9]+$/, "Only numbers are allowed"),
   accountType: z.enum(["Savings", "Current"]),
-  initialBalance: z.string().min(1, "Initial balance is required"),
+  initialBalance: z.string().optional(),
   bankName: z.string().min(1, "Bank name is required"),
+  holderName: z.string().min(1, "Account holder name is required"),
+  branch: z.string().min(1, "Branch is required"),
+  notes: z.string().optional(),
 });
 
 type AccountFormValues = z.infer<typeof accountFormSchema>;
 
 export function AddBankAccountDialog() {
   const [open, setOpen] = useState(false);
+  const { toast } = useToast();
+  const dispatch = useAppDispatch();
 
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
@@ -43,12 +54,40 @@ export function AddBankAccountDialog() {
       accountType: "Savings",
       initialBalance: "",
       bankName: "",
+      holderName: "",
+      branch: "",
+      notes: "",
     },
   });
 
-  const onSubmit = (data: AccountFormValues) => {
-    setOpen(false);
-    form.reset();
+  const onSubmit = async (data: AccountFormValues) => {
+    try {
+      await dispatch(
+        addAccount({
+          accountName: data.accountName!,
+          accountNumber: data.accountNumber!,
+          accountType: data.accountType!,
+          initialBalance: data.initialBalance,
+          bankName: data.bankName!,
+          holderName: data.holderName!,
+          branch: data.branch!,
+          notes: data.notes,
+        })
+      ).unwrap();
+
+      toast({
+        title: "Account added",
+        description: "Bank account was successfully added.",
+      });
+      setOpen(false);
+      form.reset();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error?.message || "Failed to add account.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -77,7 +116,9 @@ export function AddBankAccountDialog() {
               name="accountName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Account Name</FormLabel>
+                  <FormLabel>
+                    Account Name<span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input placeholder="e.g., HDFC Bank Savings" {...field} />
                   </FormControl>
@@ -91,7 +132,9 @@ export function AddBankAccountDialog() {
               name="bankName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Bank Name</FormLabel>
+                  <FormLabel>
+                    Bank Name<span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input placeholder="e.g., HDFC Bank" {...field} />
                   </FormControl>
@@ -105,9 +148,16 @@ export function AddBankAccountDialog() {
               name="accountNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Account Number (Last 4 digits)</FormLabel>
+                  <FormLabel>
+                    Account Number<span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="1234" {...field} />
+                    <Input
+                      placeholder="123456"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -119,7 +169,9 @@ export function AddBankAccountDialog() {
               name="accountType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Account Type</FormLabel>
+                  <FormLabel>
+                    Account Type<span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <select
                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -141,7 +193,58 @@ export function AddBankAccountDialog() {
                 <FormItem>
                   <FormLabel>Initial Balance</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="10000" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="10000"
+                      inputMode="numeric"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="holderName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Account Holder Name<span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., Ayush Rustagi" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="branch"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Branch<span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., MG Road Branch" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Notes</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Optional notes" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

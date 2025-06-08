@@ -7,16 +7,6 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        // Accounts
-        Schema::create('accounts', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('name');
-            $table->enum('type', ['bank', 'wallet', 'credit_card']);
-            $table->decimal('initial_balance', 12, 2)->default(0);
-            $table->timestamps();
-        });
-
         // Categories (static, not user-specific now)
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
@@ -45,7 +35,7 @@ return new class extends Migration {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('account_id')->constrained()->onDelete('cascade');
+            $table->foreignId('account_id');
             $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null');
             $table->decimal('amount', 12, 2);
             $table->enum('type', ['income', 'expense']);
@@ -58,8 +48,8 @@ return new class extends Migration {
         Schema::create('transfers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('from_account_id')->constrained('accounts')->onDelete('cascade');
-            $table->foreignId('to_account_id')->constrained('accounts')->onDelete('cascade');
+            $table->foreignId('from_account_id');
+            $table->foreignId('to_account_id');
             $table->decimal('amount', 12, 2);
             $table->date('date');
             $table->string('note')->nullable();
@@ -70,7 +60,7 @@ return new class extends Migration {
         Schema::create('emi_schedules', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('account_id')->constrained()->onDelete('cascade');
+            $table->foreignId('account_id');
             $table->string('name');
             $table->decimal('amount', 12, 2);
             $table->integer('total_installments');
@@ -99,6 +89,5 @@ return new class extends Migration {
         Schema::dropIfExists('currencies');
         Schema::dropIfExists('frequencies');
         Schema::dropIfExists('categories');
-        Schema::dropIfExists('accounts');
     }
 };
