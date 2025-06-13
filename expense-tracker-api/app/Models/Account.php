@@ -24,23 +24,23 @@ class Account extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function savingsDetails(): HasOne
+    public function bankAccountDetails(): HasOne
     {
-        return $this->hasOne(AccountDetailBankAccount::class);
+        return $this->hasOne(AccountDetailsBankAccount::class);
     }
 
     public function creditCardDetails(): HasOne
     {
-        return $this->hasOne(AccountDetailCreditCard::class);
+        return $this->hasOne(AccountDetailsCreditCard::class);
     }
 
     public function debitCardDetails(): HasOne
     {
-        return $this->hasOne(AccountDetailDebitCard::class);
+        return $this->hasOne(AccountDetailsDebitCard::class);
     }
 
     public function walletDetails(): HasOne
     {
-        return $this->hasOne(AccountDetailWallet::class);
+        return $this->hasOne(AccountDetailsWallet::class);
     }
 }

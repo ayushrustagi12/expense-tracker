@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Account;
-use App\Models\AccountDetailBankAccount;
-use App\Models\AccountDetailCreditCard;
-use App\Models\AccountDetailDebitCard;
-use App\Models\AccountDetailWallet;
+use App\Models\AccountDetailsBankAccount;
+use App\Models\AccountDetailsCreditCard;
+use App\Models\AccountDetailsDebitCard;
+use App\Models\AccountDetailsWallet;
 use Illuminate\Support\Facades\Auth;
 
 class AccountController extends Controller
@@ -49,7 +49,7 @@ class AccountController extends Controller
         switch ($request->account_category) {
             case 'savings':
             case 'current':
-                AccountDetailBankAccount::create([
+                AccountDetailsBankAccount::create([
                     'account_id' => $account->id,
                     'holder_name' => $request->details['holder_name'],
                     'bank_name' => $request->details['bank_name'],
@@ -60,7 +60,7 @@ class AccountController extends Controller
                 break;
 
             case 'credit_card':
-                AccountDetailCreditCard::create([
+                AccountDetailsCreditCard::create([
                     'account_id' => $account->id,
                     'holder_name' => $request->details['holder_name'],
                     'bank_name' => $request->details['bank_name'],
@@ -71,7 +71,7 @@ class AccountController extends Controller
                 break;
 
             case 'debit_card':
-                AccountDetailDebitCard::create([
+                AccountDetailsDebitCard::create([
                     'account_id' => $account->id,
                     'holder_name' => $request->details['holder_name'],
                     'bank_name' => $request->details['bank_name'],
@@ -81,7 +81,7 @@ class AccountController extends Controller
                 break;
 
             case 'wallet':
-                AccountDetailWallet::create([
+                AccountDetailsWallet::create([
                     'account_id' => $account->id,
                     'wallet_provider' => $request->details['wallet_provider'],
                     'wallet_type' => $request->details['wallet_type'],

@@ -1,31 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAccounts } from "@/redux/accountSlice";
 import { Layout } from "@/components/Layout";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { CreditCard, Wallet, MoreVertical } from "lucide-react";
 import { AddCreditCardDialog } from "@/components/AddCreditCardDialog";
 import { AddBankAccountDialog } from "@/components/AddBankAccountDialog";
 import { AddWalletDialog } from "@/components/AddWalletDialog";
-
-const accounts = [
-  {
-    id: 1,
-    name: "HDFC Bank Savings",
-    type: "Bank Account",
-    number: "****1234",
-    balance: 45000,
-    icon: Wallet,
-    color: "bg-blue-500",
-  },
-  {
-    id: 2,
-    name: "SBI Current Account",
-    type: "Bank Account",
-    number: "****5678",
-    balance: 12000,
-    icon: Wallet,
-    color: "bg-green-500",
-  },
-];
+import type { RootState, AppDispatch } from "@/redux/store";
 
 const cards = [
   {
@@ -91,10 +73,18 @@ const wallets = [
 ];
 
 const Accounts = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const accounts = useSelector(
+    (state: RootState) => state.accountData.list || []
+  );
+
+  useEffect(() => {
+    dispatch(fetchAccounts());
+  }, [dispatch]);
+
   return (
     <Layout>
       <div className="p-4 md:p-6 lg:p-8">
-        {/* Mobile header with trigger */}
         <div className="flex items-center justify-between mb-6 md:hidden">
           <div className="flex items-center gap-4">
             <SidebarTrigger />
@@ -109,7 +99,6 @@ const Accounts = () => {
           </div>
         </div>
 
-        {/* Desktop header */}
         <div className="hidden md:flex justify-between items-center mb-8">
           <div>
             <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">
@@ -137,208 +126,54 @@ const Accounts = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-            {accounts.map((account) => (
-              <div
-                key={account.id}
-                className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <div
-                    className={`p-2 md:p-3 rounded-lg ${account.color} bg-opacity-10`}
-                  >
-                    <account.icon
-                      className={`h-5 w-5 md:h-6 md:w-6 ${account.color.replace(
-                        "bg-",
-                        "text-"
-                      )}`}
-                    />
+            {accounts.map((account) => {
+              const bankDetails = account.bank_account_details;
+              return (
+                <div
+                  key={account.id}
+                  className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <div
+                      className={`p-2 md:p-3 rounded-lg bg-blue-100`} // Example static color, replace if you want dynamic
+                    >
+                      {/* Replace with a proper icon component if you have one */}
+                      <svg
+                        className="h-6 w-6 text-blue-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8c1.657 0 3-.895 3-2s-1.343-2-3-2-3 .895-3 2 1.343 2 3 2zM12 12v7m0 0l3-3m-3 3l-3-3"
+                        />
+                      </svg>
+                    </div>
+                    <button className="text-gray-400 hover:text-gray-600 p-1">
+                      <MoreVertical className="h-4 w-4 md:h-5 md:w-5" />
+                    </button>
                   </div>
-                  <button className="text-gray-400 hover:text-gray-600 p-1">
-                    <MoreVertical className="h-4 w-4 md:h-5 md:w-5" />
-                  </button>
-                </div>
 
-                <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-1 truncate">
-                  {account.name}
-                </h3>
-                <p className="text-sm text-gray-500 mb-4">{account.number}</p>
+                  <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-1 truncate">
+                    {account.account_name}
+                  </h3>
+                  <p className="text-sm text-gray-500 mb-4">
+                    {bankDetails ? bankDetails.account_number : "N/A"}
+                  </p>
 
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Balance</span>
-                  <span className="text-base md:text-lg font-bold text-gray-900">
-                    ₹{account.balance.toLocaleString()}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Cards */}
-        <div className="mb-6 md:mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg md:text-xl font-semibold text-gray-900">
-              Payment Cards
-            </h2>
-            <div className="md:hidden">
-              <AddCreditCardDialog />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-            {cards.map((card) => (
-              <div
-                key={card.id}
-                className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <div
-                    className={`p-2 md:p-3 rounded-lg ${card.color} bg-opacity-10`}
-                  >
-                    <card.icon
-                      className={`h-5 w-5 md:h-6 md:w-6 ${card.color.replace(
-                        "bg-",
-                        "text-"
-                      )}`}
-                    />
-                  </div>
-                  <button className="text-gray-400 hover:text-gray-600 p-1">
-                    <MoreVertical className="h-4 w-4 md:h-5 md:w-5" />
-                  </button>
-                </div>
-
-                <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-1 truncate">
-                  {card.name}
-                </h3>
-                <p className="text-sm text-gray-500 mb-4">{card.number}</p>
-
-                {card.type === "Credit Card" && (
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Used</span>
-                      <span className="text-sm font-medium">
-                        ₹{card.used?.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Limit</span>
-                      <span className="text-sm font-medium">
-                        ₹{card.limit?.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Available</span>
-                      <span className="text-sm font-bold text-green-600">
-                        ₹
-                        {(
-                          (card.limit || 0) - (card.used || 0)
-                        ).toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">
-                        Billing Date
-                      </span>
-                      <span className="text-sm font-medium">
-                        {card.billingDate}
-                      </span>
-                    </div>
-
-                    {/* Usage Bar */}
-                    <div className="mt-4">
-                      <div className="flex justify-between text-xs text-gray-500 mb-1">
-                        <span>Usage</span>
-                        <span>
-                          {Math.round(
-                            ((card.used || 0) / (card.limit || 1)) * 100
-                          )}
-                          %
-                        </span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                          style={{
-                            width: `${
-                              ((card.used || 0) / (card.limit || 1)) * 100
-                            }%`,
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {card.type === "Debit Card" && (
-                  <div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">
-                        Linked Account
-                      </span>
-                      <span className="text-sm font-medium truncate ml-2">
-                        {card.linkedAccount}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Wallets */}
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg md:text-xl font-semibold text-gray-900">
-              Wallets
-            </h2>
-            <div className="md:hidden">
-              <AddWalletDialog />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-            {wallets.map((wallet) => (
-              <div
-                key={wallet.id}
-                className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <div
-                    className={`p-2 md:p-3 rounded-lg ${wallet.color} bg-opacity-10`}
-                  >
-                    <wallet.icon
-                      className={`h-5 w-5 md:h-6 md:w-6 ${wallet.color.replace(
-                        "bg-",
-                        "text-"
-                      )}`}
-                    />
-                  </div>
-                  <button className="text-gray-400 hover:text-gray-600 p-1">
-                    <MoreVertical className="h-4 w-4 md:h-5 md:w-5" />
-                  </button>
-                </div>
-
-                <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-1 truncate">
-                  {wallet.name}
-                </h3>
-                <p className="text-sm text-gray-500 mb-4">{wallet.type}</p>
-
-                {wallet.provider && (
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-sm text-gray-600">Provider</span>
-                    <span className="text-sm font-medium">
-                      {wallet.provider}
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Balance</span>
+                    <span className="text-base md:text-lg font-bold text-gray-900">
+                      ₹{parseFloat(account.balance).toLocaleString()}
                     </span>
                   </div>
-                )}
-
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Balance</span>
-                  <span className="text-base md:text-lg font-bold text-gray-900">
-                    ₹{wallet.balance.toLocaleString()}
-                  </span>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

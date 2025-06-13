@@ -4,12 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AccountDetailWallet extends Model
+class AccountDetailsBankAccount extends Model
 {
     protected $fillable = [
         'account_id',
-        'wallet_provider',
-        'wallet_type',
+        'holder_name',
+        'bank_name',
+        'branch',
+        'account_number',
+        'account_type',
     ];
 
     public function account()

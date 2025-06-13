@@ -4,15 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AccountDetailBankAccount extends Model
+class AccountDetailsCreditCard extends Model
 {
     protected $fillable = [
         'account_id',
         'holder_name',
         'bank_name',
-        'branch',
-        'account_number',
-        'account_type',
+        'card_number',
+        'billing_cycle_day',
+        'is_auto_debit_enabled',
     ];
 
     public function account()

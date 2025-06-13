@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import axiosInstance from "axios";
 
 export const addAccount = createAsyncThunk(
   "accounts/addAccount",
@@ -35,8 +35,20 @@ export const addAccount = createAsyncThunk(
         },
       };
 
-      const response = await axios.post("/api/accounts", payload);
-      return response.data; // created account returned
+      const response = await axiosInstance.post("/api/accounts", payload);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+export const fetchAccounts = createAsyncThunk(
+  "accounts/fetchAccounts",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/api/accounts");
+      return response.data; // array of accounts
     } catch (error: any) {
       return rejectWithValue(error.response?.data || error.message);
     }
@@ -46,7 +58,7 @@ export const addAccount = createAsyncThunk(
 const accountsSlice = createSlice({
   name: "accounts",
   initialState: {
-    list: [],
+    list: [] as any[],
     loading: false,
     error: null as string | null,
   },
@@ -62,6 +74,18 @@ const accountsSlice = createSlice({
         state.list.push(action.payload);
       })
       .addCase(addAccount.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(fetchAccounts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAccounts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.list = action.payload;
+      })
+      .addCase(fetchAccounts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

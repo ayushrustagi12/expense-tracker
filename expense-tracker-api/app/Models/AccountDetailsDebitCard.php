@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AccountDetailDebitCard extends Model
+class AccountDetailsDebitCard extends Model
 {
     protected $fillable = [
         'account_id',
