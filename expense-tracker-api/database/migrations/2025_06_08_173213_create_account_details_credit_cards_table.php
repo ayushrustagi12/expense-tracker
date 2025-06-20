@@ -12,9 +12,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('account_id')->constrained('accounts')->onDelete('cascade');
             $table->string('holder_name')->nullable();
-            $table->string('bank_name');
-            $table->string('card_number');
-            $table->unsignedTinyInteger('billing_cycle_day');
+            $table->string('bank_name')->nullable();
+            $table->string('card_number')->nullable();
+            $table->decimal('credit_limit', 12, 2)->nullable();
+            $table->unsignedTinyInteger('billing_cycle_day')->nullable(); // 1 to 31
             $table->boolean('is_auto_debit_enabled')->default(false);
             $table->timestamps();
         });

@@ -60,25 +60,28 @@ class AccountController extends Controller
                 break;
 
             case 'credit_card':
+                $details = $request->input('details', []);
                 AccountDetailsCreditCard::create([
                     'account_id' => $account->id,
-                    'holder_name' => $request->details['holder_name'],
-                    'bank_name' => $request->details['bank_name'],
-                    'card_number' => $request->details['card_number'],
-                    'billing_cycle_day' => $request->details['billing_cycle_day'],
-                    'is_auto_debit_enabled' => $request->details['is_auto_debit_enabled'] ?? false,
+                    'holder_name' => $details['holder_name'] ?? null,
+                    'bank_name' => $details['bank_name'] ?? '',
+                    'card_number' => $details['card_number'] ?? '',
+                    'billing_cycle_day' => $details['billing_cycle_day'] ?? 1,
+                    'is_auto_debit_enabled' => $details['is_auto_debit_enabled'] ?? false,
                 ]);
                 break;
 
             case 'debit_card':
+                $details = $request->input('details', []);
                 AccountDetailsDebitCard::create([
                     'account_id' => $account->id,
-                    'holder_name' => $request->details['holder_name'],
-                    'bank_name' => $request->details['bank_name'],
-                    'card_number' => $request->details['card_number'],
-                    'linked_bank_account_id' => $request->details['linked_bank_account_id'] ?? null,
+                    'holder_name' => $details['holder_name'] ?? null,
+                    'bank_name' => $details['bank_name'] ?? '',
+                    'card_number' => $details['card_number'] ?? '',
+                    'linked_bank_account_id' => $details['linked_bank_account_id'] ?? null,
                 ]);
                 break;
+
 
             case 'wallet':
                 AccountDetailsWallet::create([

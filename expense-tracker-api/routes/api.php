@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\StaticDataController;
 use App\Http\Controllers\Api\AccountController;
+use App\Http\Controllers\CardController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -20,4 +21,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/accounts/{id}', [AccountController::class, 'show']);
     Route::put('/accounts/{id}', [AccountController::class, 'update']);
     Route::delete('/accounts/{id}', [AccountController::class, 'destroy']);
+});
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/credit-cards', [CardController::class, 'storeCreditCard']);
+    Route::post('/debit-cards', [CardController::class, 'storeDebitCard']);
 });

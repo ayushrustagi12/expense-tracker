@@ -12,9 +12,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('account_id')->constrained('accounts')->onDelete('cascade');
             $table->string('holder_name')->nullable();
-            $table->string('bank_name');
-            $table->string('card_number');
-            $table->foreignId('linked_bank_account_id')->nullable()->constrained('accounts')->onDelete('set null');
+            $table->string('bank_name')->nullable();
+            $table->string('card_number')->nullable();
+            $table->foreignId('linked_bank_account_id')
+                ->nullable()
+                ->constrained('accounts')
+                ->onDelete('set null'); // if linked account is deleted, unlink the card
             $table->timestamps();
         });
     }

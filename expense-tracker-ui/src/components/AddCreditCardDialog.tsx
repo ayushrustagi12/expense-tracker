@@ -22,6 +22,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
+import { addCreditCard, addDebitCard } from "@/redux/cardsSlice";
+
 const cardFormSchema = z.object({
   cardName: z.string().min(1, "Card name is required"),
   cardNumber: z.string().min(16, "Card number must be at least 16 digits"),
@@ -29,12 +32,17 @@ const cardFormSchema = z.object({
   limit: z.string().optional(),
   billingDate: z.string().optional(),
   linkedAccount: z.string().optional(),
+  holderName: z.string().min(1, "Holder name is required"),
 });
 
 type CardFormValues = z.infer<typeof cardFormSchema>;
 
 export function AddCreditCardDialog() {
   const [open, setOpen] = useState(false);
+  const dispatch = useAppDispatch();
+
+  // Fetch accounts from the redux store
+  const accounts = useAppSelector((state) => state.accountData.list);
 
   const form = useForm<CardFormValues>({
     resolver: zodResolver(cardFormSchema),
@@ -49,6 +57,27 @@ export function AddCreditCardDialog() {
   });
 
   const onSubmit = (data: CardFormValues) => {
+    if (data.cardType === "Credit Card") {
+      dispatch(
+        addCreditCard({
+          cardName: data.cardName,
+          cardNumber: data.cardNumber,
+          holderName: data.holderName,
+          limit: data.limit || undefined,
+          billingDate: data.billingDate || undefined,
+        })
+      );
+    } else {
+      dispatch(
+        addDebitCard({
+          cardName: data.cardName,
+          cardNumber: data.cardNumber,
+          holderName: data.holderName,
+          linkedAccountId: data.linkedAccount || "",
+        })
+      );
+    }
+
     setOpen(false);
     form.reset();
   };
@@ -90,12 +119,30 @@ export function AddCreditCardDialog() {
 
             <FormField
               control={form.control}
+              name="holderName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Card Holder Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., Ayush Rustagi" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="cardNumber"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Card Number (Last 4 digits)</FormLabel>
                   <FormControl>
-                    <Input placeholder="1234" {...field} />
+                    <Input
+                      placeholder="1234 5678 9012 3456"
+                      maxLength={16}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -110,8 +157,8 @@ export function AddCreditCardDialog() {
                   <FormLabel>Card Type</FormLabel>
                   <FormControl>
                     <select
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       {...field}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       <option value="Credit Card">Credit Card</option>
                       <option value="Debit Card">Debit Card</option>
@@ -162,7 +209,17 @@ export function AddCreditCardDialog() {
                   <FormItem>
                     <FormLabel>Linked Account</FormLabel>
                     <FormControl>
-                      <Input placeholder="HDFC Bank Savings" {...field} />
+                      <select
+                        {...field}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        <option value="">Select Account</option>
+                        {accounts.map((account) => (
+                          <option key={account.id} value={account.id}>
+                            {account.account_name} - {account.account_number}
+                          </option>
+                        ))}
+                      </select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
