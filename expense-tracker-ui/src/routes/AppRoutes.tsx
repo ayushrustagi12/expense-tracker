@@ -6,6 +6,7 @@ import PrivateRoute from "./PrivateRoute";
 import Dashboard from "../pages/Dashboard";
 import Transactions from "../pages/Transactions";
 import Accounts from "../pages/Accounts";
+import Cards from "../pages/Cards";
 import EMITracker from "../pages/EMITracker";
 import Monthly from "../pages/Monthly";
 import Settings from "../pages/Settings";
@@ -47,6 +48,14 @@ const AppRoutes = () => {
         element={
           <PrivateRoute>
             <Accounts />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/cards"
+        element={
+          <PrivateRoute>
+            <Cards />
           </PrivateRoute>
         }
       />

@@ -12,6 +12,7 @@ import {
   User,
   LogOut,
   ChevronUp,
+  Building2,
 } from "lucide-react";
 import {
   Sidebar,
@@ -40,9 +41,10 @@ import { logoutUser } from "@/redux/authSlice";
 import { useAppDispatch } from "@/redux/hook";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Transactions", href: "/transactions", icon: Receipt },
-  { name: "Accounts & Cards", href: "/accounts", icon: CreditCard },
+  { name: "Accounts", href: "/accounts", icon: Building2 },
+  { name: "Cards", href: "/cards", icon: CreditCard },
   { name: "EMI Tracker", href: "/emi", icon: Wallet },
   { name: "Monthly Tabs", href: "/monthly", icon: Calendar },
   { name: "Preferences", href: "/settings", icon: Settings },

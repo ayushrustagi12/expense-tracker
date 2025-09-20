@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axiosInstance from "axios";
+import axios from "axios";
+import { getAxiosConfig } from "../utils/csrf";
 
 export const addAccount = createAsyncThunk(
   "accounts/addAccount",
@@ -47,7 +48,11 @@ export const fetchAccounts = createAsyncThunk(
   "accounts/fetchAccounts",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get("/api/accounts");
+      const config = await getAxiosConfig();
+      const response = await axios.get(
+        "http://localhost:8000/api/accounts",
+        config
+      );
       return response.data; // array of accounts
     } catch (error: any) {
       return rejectWithValue(error.response?.data || error.message);

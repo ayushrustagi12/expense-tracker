@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class AccountDetailsCreditCard extends Model
 {
+    protected $table = 'account_details_credit_cards';
+
     protected $fillable = [
         'account_id',
         'holder_name',

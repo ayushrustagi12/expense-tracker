@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->prepend(\App\Http\Middleware\HandleCustomCors::class);
+        $middleware->prepend(\App\Http\Middleware\CorsMiddleware::class);
         $middleware->prepend(\Illuminate\Cookie\Middleware\EncryptCookies::class);
         $middleware->prepend(\Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class);
         $middleware->prepend(\Illuminate\Session\Middleware\StartSession::class);

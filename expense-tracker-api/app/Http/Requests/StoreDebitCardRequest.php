@@ -15,8 +15,12 @@ class StoreDebitCardRequest extends FormRequest
     {
         return [
             'card_name' => 'required|string|max:255',
-            'card_number' => 'required|string|size:16',
-            'linked_account_id' => 'required|exists:accounts,id',
+            'holder_name' => 'required|string|max:255',
+            'bank_name' => 'required|string|max:255',
+            'card_number' => 'required|string|max:19',
+            'linked_bank_account_id' => 'nullable|exists:accounts,id',
+            'currency' => 'nullable|string|max:10',
+            'notes' => 'nullable|string',
         ];
     }
 }

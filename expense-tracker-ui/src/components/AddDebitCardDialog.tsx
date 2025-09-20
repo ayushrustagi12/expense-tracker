@@ -17,65 +17,65 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { CreditCard, Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../redux/store";
-import { addCreditCard } from "../redux/cardSlice";
+import { addDebitCard } from "../redux/cardSlice";
 import { useToast } from "@/hooks/use-toast";
 
-const creditCardFormSchema = z.object({
+const debitCardFormSchema = z.object({
   card_name: z.string().min(1, "Card name is required"),
   holder_name: z.string().min(1, "Holder name is required"),
   bank_name: z.string().min(1, "Bank name is required"),
   card_number: z.string().min(16, "Card number must be at least 16 digits"),
-  billing_cycle_day: z.number().min(1).max(31).optional(),
-  is_auto_debit_enabled: z.boolean().optional(),
+  linked_bank_account_id: z.number().optional(),
   currency: z.string().optional(),
   notes: z.string().optional(),
 });
 
-type CreditCardFormValues = z.infer<typeof creditCardFormSchema>;
+type DebitCardFormValues = z.infer<typeof debitCardFormSchema>;
 
-interface AddCreditCardDialogProps {
+interface AddDebitCardDialogProps {
   children: React.ReactNode;
 }
 
-export function AddCreditCardDialog({ children }: AddCreditCardDialogProps) {
+export function AddDebitCardDialog({ children }: AddDebitCardDialogProps) {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const { toast } = useToast();
+  const { list: accounts, loading: accountsLoading } = useSelector(
+    (state: RootState) => state.accountData
+  );
 
-  const form = useForm<CreditCardFormValues>({
-    resolver: zodResolver(creditCardFormSchema),
+  const form = useForm<DebitCardFormValues>({
+    resolver: zodResolver(debitCardFormSchema),
     defaultValues: {
       card_name: "",
       holder_name: "",
       bank_name: "",
       card_number: "",
-      billing_cycle_day: 1,
-      is_auto_debit_enabled: false,
+      linked_bank_account_id: undefined,
       currency: "INR",
       notes: "",
     },
   });
 
-  const onSubmit = async (data: CreditCardFormValues) => {
+  const onSubmit = async (data: DebitCardFormValues) => {
     try {
-      await dispatch(addCreditCard(data)).unwrap();
+      await dispatch(addDebitCard(data)).unwrap();
       toast({
         title: "Success",
-        description: "Credit card added successfully",
+        description: "Debit card added successfully",
       });
       setOpen(false);
       form.reset();
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to add credit card",
+        description: "Failed to add debit card",
         variant: "destructive",
       });
     }
@@ -88,10 +88,10 @@ export function AddCreditCardDialog({ children }: AddCreditCardDialogProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <CreditCard className="h-5 w-5" />
-            Add Credit Card
+            Add Debit Card
           </DialogTitle>
           <DialogDescription>
-            Add a new credit card to track your expenses.
+            Add a new debit card to track your expenses.
           </DialogDescription>
         </DialogHeader>
 
@@ -104,7 +104,7 @@ export function AddCreditCardDialog({ children }: AddCreditCardDialogProps) {
                 <FormItem>
                   <FormLabel>Card Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., HDFC Credit Card" {...field} />
+                    <Input placeholder="e.g., SBI Debit Card" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -132,7 +132,7 @@ export function AddCreditCardDialog({ children }: AddCreditCardDialogProps) {
                 <FormItem>
                   <FormLabel>Bank Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., HDFC Bank" {...field} />
+                    <Input placeholder="e.g., State Bank of India" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -159,44 +159,40 @@ export function AddCreditCardDialog({ children }: AddCreditCardDialogProps) {
 
             <FormField
               control={form.control}
-              name="billing_cycle_day"
+              name="linked_bank_account_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Billing Cycle Day</FormLabel>
+                  <FormLabel>Linked Bank Account (Optional)</FormLabel>
                   <FormControl>
-                    <Input
-                      type="number"
-                      min="1"
-                      max="31"
-                      placeholder="15"
+                    <select
                       {...field}
                       onChange={(e) =>
-                        field.onChange(parseInt(e.target.value) || 1)
+                        field.onChange(
+                          e.target.value ? parseInt(e.target.value) : undefined
+                        )
                       }
-                    />
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      disabled={accountsLoading}
+                    >
+                      <option value="">
+                        {accountsLoading
+                          ? "Loading accounts..."
+                          : "Select Account"}
+                      </option>
+                      {accounts
+                        .filter(
+                          (account) =>
+                            account.account_category === "savings" ||
+                            account.account_category === "current"
+                        )
+                        .map((account) => (
+                          <option key={account.id} value={account.id}>
+                            {account.account_name} - {account.account_category}
+                          </option>
+                        ))}
+                    </select>
                   </FormControl>
                   <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="is_auto_debit_enabled"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">Auto Debit</FormLabel>
-                    <div className="text-sm text-muted-foreground">
-                      Enable automatic bill payment
-                    </div>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
                 </FormItem>
               )}
             />
@@ -226,9 +222,9 @@ export function AddCreditCardDialog({ children }: AddCreditCardDialogProps) {
               </Button>
               <Button
                 type="submit"
-                className="flex-1 bg-purple-600 hover:bg-purple-700"
+                className="flex-1 bg-blue-600 hover:bg-blue-700"
               >
-                Add Credit Card
+                Add Debit Card
               </Button>
             </div>
           </form>

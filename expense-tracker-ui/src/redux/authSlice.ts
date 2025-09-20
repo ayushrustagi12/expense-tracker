@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { getAxiosConfig, clearCsrfToken } from "../utils/csrf";
 
 interface User {
   id: number;
@@ -34,15 +35,12 @@ export const registerUser = createAsyncThunk(
     thunkAPI
   ) => {
     try {
-      await getCSRF();
-      const token = decodeURIComponent(Cookies.get("XSRF-TOKEN"));
-      const response = await axios.post(`${API_URL}/register`, formData, {
-        withCredentials: true,
-        headers: {
-          "X-XSRF-TOKEN": token || "",
-        },
-      });
-
+      const config = await getAxiosConfig();
+      const response = await axios.post(
+        `${API_URL}/register`,
+        formData,
+        config
+      );
       return response.data.user;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
@@ -69,18 +67,11 @@ export const loginUser = createAsyncThunk(
     thunkAPI
   ) => {
     try {
-      await getCSRF();
-      const token = decodeURIComponent(Cookies.get("XSRF-TOKEN"));
-
+      const config = await getAxiosConfig();
       const response = await axios.post(
         `${API_URL}/login`,
         { email, password, remember },
-        {
-          withCredentials: true,
-          headers: {
-            "X-XSRF-TOKEN": token || "",
-          },
-        }
+        config
       );
 
       await thunkAPI.dispatch(fetchCurrentUser() as any);
@@ -98,19 +89,10 @@ export const loginUser = createAsyncThunk(
 export const logoutUser = createAsyncThunk(
   "auth/logout",
   async (_, thunkAPI) => {
-    await getCSRF();
-    const token = decodeURIComponent(Cookies.get("XSRF-TOKEN"));
     try {
-      await axios.post(
-        `${API_URL}/logout`,
-        {},
-        {
-          withCredentials: true,
-          headers: {
-            "X-XSRF-TOKEN": token || "",
-          },
-        }
-      );
+      const config = await getAxiosConfig();
+      await axios.post(`${API_URL}/logout`, {}, config);
+      clearCsrfToken(); // Clear CSRF token on logout
       return null;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(

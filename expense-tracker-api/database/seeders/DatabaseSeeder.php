@@ -13,12 +13,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Category::truncate();
-        \App\Models\Currency::truncate();
-
         $this->call([
             CategorySeeder::class,
             CurrencySeeder::class,
+            DummyDataSeeder::class,
         ]);
     }
 }
